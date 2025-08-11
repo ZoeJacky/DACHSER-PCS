@@ -1,0 +1,26 @@
+<div class="container mb-5">
+    <div class="card" style="padding: 20px;">
+        <!-- <h1>This is Login page!</h1> -->
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div>
+                <input type="text"
+                placeholder="Enter your username"
+                formControlName="userName"
+                class="form-control mb-3"
+                >
+            </div>
+
+            <div>
+                <input type="text"
+                placeholder="Enter your password"
+                formControlName="password"
+                class="form-control mb-3"
+                >
+            </div>
+
+            <div>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+    </div>
+</div>

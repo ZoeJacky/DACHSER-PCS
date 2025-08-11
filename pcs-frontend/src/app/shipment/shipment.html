@@ -1,0 +1,22 @@
+<form class="form" [formGroup]="shipmentForm" (ngSubmit)="onSubmit()">
+  <div class="field">
+    <label class="label">reference</label>
+    <input
+      type="text"
+      class="input"
+      formControlName="reference"
+    />
+  </div>
+  <div class="field">
+    <label class="label">description</label>
+    <input
+      type="text"
+      class="input"
+      formControlName="description"
+    />
+  </div>
+
+  <div>
+    <button type="submit" class="button">Submit</button>
+  </div>
+</form>

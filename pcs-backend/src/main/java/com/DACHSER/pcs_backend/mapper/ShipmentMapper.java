@@ -1,37 +1,42 @@
 package com.DACHSER.pcs_backend.mapper;
 
-import com.DACHSER.pcs_backend.dto.CostDto;
-import com.DACHSER.pcs_backend.dto.IncomeDto;
 import com.DACHSER.pcs_backend.dto.ShipmentDto;
-import com.DACHSER.pcs_backend.entity.Cost;
-import com.DACHSER.pcs_backend.entity.Income;
 import com.DACHSER.pcs_backend.entity.Shipment;
 
-import java.math.BigDecimal;
-import java.util.List;
+import java.util.stream.Collectors;
 
 public class ShipmentMapper {
     public static ShipmentDto mapToShipmentDto(Shipment shipment) {
-        List<IncomeDto> incomeDto = shipment.getIncomes().stream().map(IncomeMapper::mapToIncomeDto).toList();
-        List<CostDto> costDto = shipment.getCosts().stream().map(CostMapper::mapToCostDto).toList();
-
-        BigDecimal totalIncome = new BigDecimal(0);
-        for (Income income:shipment.getIncomes()){
-            totalIncome.add(income.getAmount());
-        }
-        BigDecimal totalCost = new BigDecimal(0);
-        for (Cost cost:shipment.getCosts()){
-            totalCost.add(cost.getAmount());
-        }
-
         return new ShipmentDto(
                 shipment.getId(),
                 shipment.getReference(),
                 shipment.getDescription(),
                 shipment.getCreatedDate(),
-                incomeDto,
-                costDto,
-                totalIncome.subtract(totalCost)
+                shipment.getIncomes().stream()
+                        .map(IncomeMapper::mapToIncomeDto)
+                        .collect(Collectors.toList()),
+                shipment.getCosts().stream()
+                        .map(CostMapper::mapToCostDto)
+                        .collect(Collectors.toList()),
+                null // Profit will be calculated in the service layer
         );
+    }
+
+    public static Shipment mapToShipment(ShipmentDto shipmentDto) {
+        Shipment shipment = new Shipment();
+        shipment.setId(shipmentDto.getId());
+        shipment.setReference(shipmentDto.getReference());
+        shipment.setDescription(shipmentDto.getDescription());
+        shipment.setCreatedDate(shipmentDto.getCreatedDate());
+
+        shipment.setIncomes(shipmentDto.getIncomes().stream()
+                .map(IncomeMapper::mapToIncome)
+                .collect(Collectors.toSet()));
+
+        shipment.setCosts(shipmentDto.getCosts().stream()
+                .map(CostMapper::mapToCost)
+                .collect(Collectors.toSet()));
+
+        return shipment;
     }
 }

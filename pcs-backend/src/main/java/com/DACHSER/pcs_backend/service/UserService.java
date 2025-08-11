@@ -12,6 +12,10 @@ public interface UserService {
 
     UserDto getUserById(Long id);
 
+    UserDto getUserByName(String name);
+
+    UserDto getUserByToken(String token);
+
     List<UserDto> getAllUsers();
 
     UserDto updateUser(Long userId, UserDto userDto);

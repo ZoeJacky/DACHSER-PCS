@@ -1,0 +1,47 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <!-- <a class="navbar-brand">Navbar</a> -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="/home">Home</a>
+        </li>
+
+        <div *ngIf="authService.currentUserSig()">
+          <!-- <pre>{{ authService.currentUserSig() | json }}</pre> -->
+          <div *ngIf="authService.currentUserSig()?.role?.includes('finance-dep')">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" routerLink="/shipments">Finance Department Dashboard</a>
+            </li>
+          </div>
+
+          <div *ngIf="authService.currentUserSig()?.role?.includes('payment-admin')">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" routerLink="/payment-admin">Customer payment</a>
+            </li>
+          </div>
+
+          <div *ngIf="authService.currentUserSig()?.role?.includes('cost-admin')">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" routerLink="/cost-admin">Operational costs</a>
+            </li>
+          </div>
+
+        </div>
+      </ul>
+      <div *ngIf="authService.currentUserSig()===null">
+        <button type="button" class="btn btn-success" routerLink="/login">Login</button>
+      </div>
+      <div *ngIf="authService.currentUserSig()">
+        {{authService.currentUserSig()?.userName}}
+        <button type="button" class="btn btn-danger" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- The routed views render in the <router-outlet>-->
+<router-outlet></router-outlet>

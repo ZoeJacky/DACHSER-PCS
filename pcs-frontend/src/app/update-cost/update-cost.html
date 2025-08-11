@@ -1,0 +1,31 @@
+<p>update-cost works!</p>
+<form class="form" [formGroup]="costForm" (ngSubmit)="onSubmit()">
+    <div class="field">
+      <label class="label">amount</label>
+      <input
+        type="text"
+        class="input"
+        formControlName="amount"
+      />
+    </div>
+    <div class="field">
+      <label class="label">category</label>
+      <input
+        type="text"
+        class="input"
+        formControlName="category"
+      />
+    </div>
+    <!-- <div class="field">
+        <label class="label">shipment id</label>
+        <input
+          type="text"
+          class="input"
+          formControlName="shipmentId"
+        />
+    </div> -->
+  
+    <div>
+      <button type="submit" class="button">Submit</button>
+    </div>
+  </form>

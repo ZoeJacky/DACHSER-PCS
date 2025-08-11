@@ -1,0 +1,31 @@
+<p>income works!</p>
+<form class="form" [formGroup]="incomeForm" (ngSubmit)="onSubmit()">
+    <div class="field">
+      <label class="label">amount</label>
+      <input
+        type="text"
+        class="input"
+        formControlName="amount"
+      />
+    </div>
+    <div class="field">
+      <label class="label">source</label>
+      <input
+        type="text"
+        class="input"
+        formControlName="source"
+      />
+    </div>
+    <div class="field">
+        <label class="label">shipment id</label>
+        <input
+          type="text"
+          class="input"
+          formControlName="shipmentId"
+        />
+    </div>
+  
+    <div>
+      <button type="submit" class="button">Submit</button>
+    </div>
+  </form>

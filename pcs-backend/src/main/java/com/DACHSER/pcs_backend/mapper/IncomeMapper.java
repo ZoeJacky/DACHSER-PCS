@@ -2,27 +2,30 @@ package com.DACHSER.pcs_backend.mapper;
 
 import com.DACHSER.pcs_backend.dto.IncomeDto;
 import com.DACHSER.pcs_backend.entity.Income;
-import com.DACHSER.pcs_backend.entity.Shipment;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IncomeMapper {
+
+    // Map Income entity to IncomeDto
     public static IncomeDto mapToIncomeDto(Income income) {
         return new IncomeDto(
                 income.getId(),
                 income.getAmount(),
                 income.getSource(),
-                income.getDate()
+                income.getDate(),
+                null
         );
     }
 
-    public static Income maptoIncome(IncomeDto incomeDto, Shipment shipment){
-        return new Income(
-                incomeDto.getId(),
-                incomeDto.getAmount(),
-                incomeDto.getSource(),
-                incomeDto.getDate(),
-                shipment
-        );
+    // Map IncomeDto to Income entity
+    public static Income mapToIncome(IncomeDto incomeDto) {
+        Income income = new Income();
+        income.setId(incomeDto.getId());
+        income.setAmount(incomeDto.getAmount());
+        income.setSource(incomeDto.getSource());
+        income.setDate(incomeDto.getDate());
+
+        return income;
     }
-
-
 }

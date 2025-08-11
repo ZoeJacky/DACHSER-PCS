@@ -1,0 +1,34 @@
+<p>cost-admin works!</p>
+<div className='container'>
+    <h2 className='text-center'>List of Costs:</h2>
+    <button className='btn btn-primary mb-2' routerLink="/add-cost">Add Cost</button>
+    <table className='table table-striped table-bordered'>
+        <thead>
+            <tr>
+                <th>Cost id</th>
+                <th>Cost amount</th>
+                <th>Cost category</th>
+                <th>Cost date</th>
+                <th>Shipment id</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (cost of costs; track cost.id){
+            <tr>
+                <td>{{ cost.id }}</td>
+                <td>{{ cost.amount}}</td>
+                <td>{{ cost.category }}</td>
+                <td>{{ cost.date }}</td>
+                <td>{{ cost.shipmentId }}</td>
+                <td>
+                    <button class="btn btn-info" [routerLink]="['/update-cost', cost.id]">Update</button>
+                    <button class="btn btn-danger" (click)="removeCost(cost.id)" style="margin-left:10px">Delete</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<router-outlet></router-outlet>

@@ -1,0 +1,47 @@
+<div className='container'>
+    <h2 className='text-center'>List of Shipments:</h2>
+    <!-- <button className='btn btn-primary mb-2' routerLink="/add-shipment">Add Shipment</button> -->
+    <table className='table table-striped table-bordered'>
+        <thead>
+            <tr>
+                <th>Shipment id</th>
+                <th>Shipment reference</th>
+                <th>Shipment description</th>
+                <th>Shipment incomes</th>
+                <th>Shipment costs</th>
+                <th>Shipment createdDate</th>
+                <th>Shipment profit/loss</th>
+                <!-- <th>Actions</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            @for (shipment of shipments; track shipment.id){
+            <tr>
+                <td>{{ shipment.id }}</td>
+                <td>{{ shipment.reference }}</td>
+                <td>{{ shipment.description }}</td>
+                <td>
+                @for (income of shipment.incomes; track income.id) {
+                    {{ income.amount}}
+                }
+                </td>
+                <td>
+                @for (cost of shipment.costs; track cost.id) {
+                    {{ cost.amount}}
+                }
+                </td>
+                <!-- <td>{{ shipment.incomes[0].amount }}</td>
+                <td>{{ shipment.costs[0].amount }}</td> -->
+                <td>{{ shipment.createdDate }}</td>
+                <td>{{ shipment.profit }}</td>
+                <td>
+                    <!-- <button class="btn btn-info" (click)="updateShipment(shipment.id)">Update</button> -->
+                    <!-- <button class="btn btn-danger" (click)="removeShipment(shipment.id)" style="margin-left:10px">Delete</button> -->
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<router-outlet></router-outlet>

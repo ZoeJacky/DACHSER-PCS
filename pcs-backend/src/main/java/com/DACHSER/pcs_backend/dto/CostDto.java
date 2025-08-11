@@ -1,4 +1,5 @@
 package com.DACHSER.pcs_backend.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +13,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CostDto {
+
     private Long id;
     private BigDecimal amount;
     private String category;
     private LocalDateTime date;
+    private Long shipmentId;
 }

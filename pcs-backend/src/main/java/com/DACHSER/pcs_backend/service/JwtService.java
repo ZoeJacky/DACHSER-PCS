@@ -5,9 +5,11 @@ import com.DACHSER.pcs_backend.entity.JwtRequest;
 import com.DACHSER.pcs_backend.entity.JwtResponse;
 import com.DACHSER.pcs_backend.entity.User;
 import com.DACHSER.pcs_backend.exception.ResourceNotFoundException;
+import com.DACHSER.pcs_backend.mapper.UserMapper;
 import com.DACHSER.pcs_backend.repository.UserRepository;
 import com.DACHSER.pcs_backend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -31,14 +33,22 @@ public class JwtService implements UserDetailsService {
 //    private UserDto userDto;
 
     @Autowired
+    @Lazy
     private AuthenticationManager authenticationManager;
 
     private UserRepository userRepository;
+    public JwtService(JwtUtil jwtUtil,
+                      @Lazy AuthenticationManager authenticationManager,
+                      UserRepository userRepository) {
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+    }
 
     public JwtResponse createJwtToken(JwtRequest jwtRequest) throws Exception {
         String userName = jwtRequest.getUserName();
-        String userPassword = jwtRequest.getUserPassword();
-        authenticate(userName, userPassword);
+        String password = jwtRequest.getPassword();
+        authenticate(userName, password);
 
         UserDetails userDetails = loadUserByUsername(userName);
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
@@ -47,7 +57,8 @@ public class JwtService implements UserDetailsService {
 
         User user = userRepository.findByUserName(userName).
                 orElseThrow(()->new ResourceNotFoundException("User not found with given userName:"+userName));
-        return new JwtResponse(user, newGeneratedToken);
+        UserDto userDto = UserMapper.mapToUserDto(user);
+        return new JwtResponse(userDto, newGeneratedToken);
     }
 
     @Override
@@ -74,9 +85,9 @@ public class JwtService implements UserDetailsService {
         return authorities;
     }
 
-    private void authenticate(String userName, String userPassword) throws Exception {
+    private void authenticate(String userName, String password) throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, userPassword));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {

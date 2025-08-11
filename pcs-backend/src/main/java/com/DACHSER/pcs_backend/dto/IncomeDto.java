@@ -1,4 +1,5 @@
 package com.DACHSER.pcs_backend.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +13,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IncomeDto {
+
     private Long id;
     private BigDecimal amount;
     private String source;
     private LocalDateTime date;
+    private Long shipmentId;
 }

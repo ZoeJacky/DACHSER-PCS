@@ -1,9 +1,11 @@
 package com.DACHSER.pcs_backend.entity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
@@ -12,9 +14,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "costs")
+@Table(name = "costs", indexes = {@Index(name = "idx_cost_shipment_id", columnList = "shipment_id"), @Index(name = "idx_cost_date", columnList = "date")})
 public class Cost {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private BigDecimal amount;
