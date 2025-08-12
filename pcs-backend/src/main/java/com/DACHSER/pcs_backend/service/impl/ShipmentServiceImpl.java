@@ -1,5 +1,6 @@
 package com.DACHSER.pcs_backend.service.impl;
 
+import com.DACHSER.pcs_backend.config.ShipmentConfig;
 import com.DACHSER.pcs_backend.dto.ShipmentDto;
 import com.DACHSER.pcs_backend.entity.*;
 import com.DACHSER.pcs_backend.exception.ResourceNotFoundException;
@@ -7,6 +8,7 @@ import com.DACHSER.pcs_backend.mapper.ShipmentMapper;
 import com.DACHSER.pcs_backend.repository.CostRepository;
 import com.DACHSER.pcs_backend.repository.IncomeRepository;
 import com.DACHSER.pcs_backend.repository.ShipmentRepository;
+import com.DACHSER.pcs_backend.service.ProfitCalculationService;
 import com.DACHSER.pcs_backend.service.ShipmentService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,44 +26,45 @@ public class ShipmentServiceImpl implements ShipmentService {
     private ShipmentRepository shipmentRepository;
     private IncomeRepository incomeRepository;
     private CostRepository costRepository;
+    private ProfitCalculationService profitCalculationService;
+    private ShipmentConfig shipmentConfig;
 
 
     @Override
     public void initShipment() {
-        Income income = new Income();
-        income.setAmount(new BigDecimal("12000"));
-        income.setSource("Client Order #12345 from Electronics Co");
-        income.setDate(LocalDateTime.now());
+        Set<Income> incomes = new HashSet<>();
+        for (ShipmentConfig.Income incomeConfig : shipmentConfig.getIncomes()) {
+            Income income = new Income();
+            income.setAmount(incomeConfig.getAmount());
+            income.setSource(incomeConfig.getSource());
+            income.setDate(LocalDateTime.now());
 
-        Cost cost1 = new Cost();
-        cost1.setAmount(new BigDecimal("4500"));
-        cost1.setCategory("Shipping Fees (Ocean Freight, Port Charges)");
-        cost1.setDate(LocalDateTime.now());
+            incomes.add(income);
+        }
 
-        Cost cost2 = new Cost();
-        cost2.setAmount(new BigDecimal("800"));
-        cost2.setCategory("Handling and Warehouse Storage");
-        cost2.setDate(LocalDateTime.now());
+        Set<Cost> costs = new HashSet<>();
+        for (ShipmentConfig.Cost costConfig : shipmentConfig.getCosts()) {
+            Cost cost = new Cost();
+            cost.setAmount(costConfig.getAmount());
+            cost.setCategory(costConfig.getCategory());
+            cost.setDate(LocalDateTime.now());
+
+            costs.add(cost);
+        }
 
         Shipment shipment = new Shipment();
-        shipment.setReference("SHP-2025-001");
-        shipment.setDescription("Delivery of electronic components from Shanghai to New York");
-        Set<Cost> costs = new HashSet<>();
-        costs.add(cost1);
-        costs.add(cost2);
-        Set<Income> incomes = new HashSet<>();
-        incomes.add(income);
+        shipment.setReference(shipmentConfig.getReference());
+        shipment.setDescription(shipmentConfig.getDescription());
         shipment.setIncomes(incomes);
         shipment.setCosts(costs);
         shipment.setCreatedDate(LocalDateTime.now());
 
-        income.setShipment(shipment);
-        cost1.setShipment(shipment);
-        cost2.setShipment(shipment);
+        incomes.forEach(income -> income.setShipment(shipment));
+        costs.forEach(cost -> cost.setShipment(shipment));
+
         shipmentRepository.save(shipment);
-        incomeRepository.save(income);
-        costRepository.save(cost1);
-        costRepository.save(cost2);
+        incomeRepository.saveAll(incomes);
+        costRepository.saveAll(costs);
     }
 
     @Override
@@ -81,26 +84,16 @@ public class ShipmentServiceImpl implements ShipmentService {
     @Override
     public List<ShipmentDto> getAllShipments() {
         List<Shipment> shipments = shipmentRepository.findAll();
-        List<ShipmentDto> shipmentDtos =  new ArrayList<>();
 
-        for(Shipment shipment : shipments){
-            BigDecimal totalIncome = BigDecimal.ZERO;
-            BigDecimal totalCost = BigDecimal.ZERO;
-            for(Income income : shipment.getIncomes()){
-                totalIncome = totalIncome.add(income.getAmount());
-            }
-            for(Cost cost : shipment.getCosts()){
-                totalCost = totalCost.add(cost.getAmount());
-            }
-            BigDecimal profit = totalIncome.subtract(totalCost);
+        List<ShipmentDto> shipmentDtos = new ArrayList<>();
+        for (Shipment shipment : shipments) {
+            BigDecimal profit = profitCalculationService.calculateProfit(shipment);
+
             ShipmentDto shipmentDto = ShipmentMapper.mapToShipmentDto(shipment);
             shipmentDto.setProfit(profit);
             shipmentDtos.add(shipmentDto);
         }
         return shipmentDtos;
-
-//        return shipments.stream().map((shipment) -> ShipmentMapper.mapToShipmentDto(shipment))
-//                .collect(Collectors.toList());
     }
 
     @Override
