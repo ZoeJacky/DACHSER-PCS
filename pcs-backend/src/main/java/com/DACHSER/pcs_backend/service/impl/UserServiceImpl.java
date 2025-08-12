@@ -1,5 +1,6 @@
 package com.DACHSER.pcs_backend.service.impl;
 
+import com.DACHSER.pcs_backend.config.RoleUserConfig;
 import com.DACHSER.pcs_backend.dto.UserCreateDto;
 import com.DACHSER.pcs_backend.dto.UserDto;
 import com.DACHSER.pcs_backend.entity.Role;
@@ -26,70 +27,33 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private JwtUtil jwtUtil;
+    private RoleUserConfig roleUserConfig;
 
     @Override
     public void initRoleAndUser() {
-        Role adminRole = new Role();
-        adminRole.setRoleName("admin");
-        adminRole.setRoleDescribtion("Admin role");
-        roleRepository.save(adminRole);
+        for (RoleUserConfig.RoleData roleData : roleUserConfig.getRoles()) {
+            Role role = new Role();
+            role.setRoleName(roleData.getRoleName());
+            role.setRoleDescribtion(roleData.getRoleDescription());
+            roleRepository.save(role);
+        }
 
-        Role userRole = new Role();
-        userRole.setRoleName("user");
-        userRole.setRoleDescribtion("Default role for newly created record");
-        roleRepository.save(userRole);
+        for (RoleUserConfig.UserData userData : roleUserConfig.getUsers()) {
+            User user = new User();
+            user.setUserName(userData.getUserName());
+            user.setPassword(passwordEncoder.encode(userData.getPassword()));  // Encrypt password
+            user.setEmail(userData.getEmail());
 
-        Role finDepRole = new Role();
-        finDepRole.setRoleName("finance-dep");
-        finDepRole.setRoleDescribtion("Finance Department");
-        roleRepository.save(finDepRole);
+            Set<Role> userRoles = new HashSet<>();
+            for (String roleName : userData.getRoles()) {
+                Role role = roleRepository.findByRoleName(roleName)
+                        .orElseThrow(() -> new RuntimeException("Role not found with given name: " + roleName));
+                userRoles.add(role);
+            }
 
-        Role paymentAdminRole = new Role();
-        paymentAdminRole.setRoleName("payment-admin");
-        paymentAdminRole.setRoleDescribtion("Customer payment administration");
-        roleRepository.save(paymentAdminRole);
-
-        Role costAdminRole = new Role();
-        costAdminRole.setRoleName("cost-admin");
-        costAdminRole.setRoleDescribtion("Operational costs administration");
-        roleRepository.save(costAdminRole);
-
-        User adminUser = new User();
-        adminUser.setUserName("admin123");
-        adminUser.setPassword(passwordEncoder.encode("admin@pass"));
-        adminUser.setEmail("admin@pcs.com");
-        Set<Role> adminRoles = new HashSet<>();
-        adminRoles.add(adminRole);
-        adminUser.setRole(adminRoles);
-        userRepository.save(adminUser);
-
-        User finDep = new User();
-        finDep.setUserName("finDep");
-        finDep.setPassword(passwordEncoder.encode("fin123"));
-        finDep.setEmail("finDep@pcs.com");
-        Set<Role> finDepRoles = new HashSet<>();
-        finDepRoles.add(finDepRole);
-        finDep.setRole(finDepRoles);
-        userRepository.save(finDep);
-
-        User paymentAdmin = new User();
-        paymentAdmin.setUserName("paymentAdmin");
-        paymentAdmin.setPassword(passwordEncoder.encode("payment123"));
-        paymentAdmin.setEmail("paymentAdmin@pcs.com");
-        Set<Role> paymentAdminRoles = new HashSet<>();
-        paymentAdminRoles.add(paymentAdminRole);
-        paymentAdmin.setRole(paymentAdminRoles);
-        userRepository.save(paymentAdmin);
-
-        User costAdmin = new User();
-        costAdmin.setUserName("costAdmin");
-        costAdmin.setPassword(passwordEncoder.encode("cost123"));
-        costAdmin.setEmail("costAdmin@pcs.com");
-        Set<Role> costAdminRoles = new HashSet<>();
-        costAdminRoles.add(costAdminRole);
-        costAdmin.setRole(costAdminRoles);
-        userRepository.save(costAdmin);
-
+            user.setRole(userRoles);
+            userRepository.save(user);
+        }
     }
 
     @Override
