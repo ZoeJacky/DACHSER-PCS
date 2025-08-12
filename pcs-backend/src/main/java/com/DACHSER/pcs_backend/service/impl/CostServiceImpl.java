@@ -1,7 +1,6 @@
 package com.DACHSER.pcs_backend.service.impl;
 
 import com.DACHSER.pcs_backend.dto.CostDto;
-import com.DACHSER.pcs_backend.dto.ShipmentDto;
 import com.DACHSER.pcs_backend.entity.Cost;
 import com.DACHSER.pcs_backend.entity.Shipment;
 import com.DACHSER.pcs_backend.exception.ResourceNotFoundException;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor

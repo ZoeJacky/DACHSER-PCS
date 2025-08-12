@@ -22,6 +22,5 @@ public class ShipmentDto {
     private List<IncomeDto> incomes;
     private List<CostDto> costs;
 
-    // Profit calculated dynamically in the service layer
     private BigDecimal profit;
 }

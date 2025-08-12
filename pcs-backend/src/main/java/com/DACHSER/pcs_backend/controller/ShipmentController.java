@@ -1,6 +1,7 @@
 package com.DACHSER.pcs_backend.controller;
 
 import com.DACHSER.pcs_backend.dto.ShipmentDto;
+import com.DACHSER.pcs_backend.dto.ShipmentWithProfitDto;
 import com.DACHSER.pcs_backend.service.ShipmentService;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
@@ -39,8 +40,8 @@ public class ShipmentController {
 
     @GetMapping()
     @PreAuthorize("hasRole('finance-dep')")
-    public ResponseEntity<List<ShipmentDto>> getAllShipments() {
-        List<ShipmentDto> shipments = shipmentService.getAllShipments();
+    public ResponseEntity<List<ShipmentWithProfitDto>> getAllShipments() {
+        List<ShipmentWithProfitDto> shipments = shipmentService.getAllShipments();
         return ResponseEntity.ok(shipments);
     }
 

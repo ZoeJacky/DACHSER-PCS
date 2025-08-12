@@ -1,6 +1,7 @@
 package com.DACHSER.pcs_backend.service;
 
 import com.DACHSER.pcs_backend.dto.ShipmentDto;
+import com.DACHSER.pcs_backend.dto.ShipmentWithProfitDto;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface ShipmentService {
 
     ShipmentDto getShipmentById(Long id);
 
-    List<ShipmentDto> getAllShipments();
+    List<ShipmentWithProfitDto> getAllShipments();
 
     ShipmentDto updateShipment(Long shipmentId, ShipmentDto updatedShipmentDto);
 

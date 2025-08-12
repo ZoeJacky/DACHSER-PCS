@@ -2,6 +2,7 @@ package com.DACHSER.pcs_backend.service.impl;
 
 import com.DACHSER.pcs_backend.config.ShipmentConfig;
 import com.DACHSER.pcs_backend.dto.ShipmentDto;
+import com.DACHSER.pcs_backend.dto.ShipmentWithProfitDto;
 import com.DACHSER.pcs_backend.entity.*;
 import com.DACHSER.pcs_backend.exception.ResourceNotFoundException;
 import com.DACHSER.pcs_backend.mapper.ShipmentMapper;
@@ -82,19 +83,10 @@ public class ShipmentServiceImpl implements ShipmentService {
     }
 
     @Override
-    public List<ShipmentDto> getAllShipments() {
-        List<Shipment> shipments = shipmentRepository.findAll();
-
-        List<ShipmentDto> shipmentDtos = new ArrayList<>();
-        for (Shipment shipment : shipments) {
-            BigDecimal profit = profitCalculationService.calculateProfit(shipment);
-
-            ShipmentDto shipmentDto = ShipmentMapper.mapToShipmentDto(shipment);
-            shipmentDto.setProfit(profit);
-            shipmentDtos.add(shipmentDto);
-        }
-        return shipmentDtos;
+    public List<ShipmentWithProfitDto> getAllShipments() {
+        return shipmentRepository.getShipmentsWithTotalIncomeAndCost();
     }
+
 
     @Override
     public ShipmentDto updateShipment(Long shipmentId, ShipmentDto updatedShipmentDto) {
